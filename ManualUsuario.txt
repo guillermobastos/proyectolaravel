@@ -1,0 +1,29 @@
+Manual de Usuario
+
+-- Descripción --
+
+Se trata de una página para poder añadir diferentes animes
+a tu directorio con su título, descripción del mismo y una valoración final además del género que estos a su vez se guardarán
+en categorías
+
+
+1 Primeramente el usuario se deberá registrar para posteriormente
+  poder iniciar sesión y así poder agregar animes.
+
+
+2 En la vista de animes se podrán ver los datos en otra ventana
+  para una mayor atención, modificar sus datos por si acaso a la hora
+  de introducirlos hubo algún dato erróneo y por último eliminarlos
+
+
+3 Esto mismo se podrá hacer para las categorías
+
+
+4 Si no se inicia sesión no se podrá acceder a las vistas tanto de animes
+  como de categorias
+
+
+5 Se podrá cerrar sesión en la vista principal del directorio de
+  animes en la parte superior izquierda
+
+

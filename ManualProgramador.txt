@@ -1,0 +1,202 @@
+Manual del programador
+
+1- Creamos la base de datos proyectolaravel creamos un directorios
+   llamado animeflv, después en la consola en dicha ruta Ejecutamos
+   composer create-project laravel/laravel animesflv "9.0"
+
+2-  animesflv>php artisan make:migration categorias
+	animesflv>php artisan make:migration animes
+
+3- En el .env modificamos lo siguiente -> DB_DATABASE=proyectolaravel
+
+4- En la tabla de categorias
+
+public function up()
+    {
+        Schema::create('categorias', function(Blueprint $table) {
+            $table->engine="InnoDB";
+            $table->id();
+            $table->string('nombre');
+            $table->timestamps();
+
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('categorias');
+    }
+
+5- En la tabla de animes
+
+    public function up()
+    {
+        Schema::create('animes', function(Blueprint $table) {
+            $table->engine="InnoDB";
+            $table->id();
+            $table->bigInteger('categoria_id')->unsigned;
+            $table->string('nombre');
+			$table->string('descripcion');
+			$table->string('valoracion');
+            $table->timestamps();
+            $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('cascade');
+
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('animes');
+    }
+
+
+6- animesflv>composer require laravel/ui
+   animesflv>php artisan ui bootstrap --auth
+   animesflv>npm install
+   animesflv>npm run dev
+
+
+7-  animesflv>composer require ibex/crud-generator --dev
+	animesflv>php artisan vendor:publish --tag=crud
+	animesflv>php artisan make:crud categorias
+	animesflv>php artisan make:crud animes
+
+
+8-  En resources\web.php
+	Route::resource('animes', App\Http\Controllers\AnimeController::class)->middleware('auth');
+	Route::resource('categorias', App\Http\Controllers\CategoriaController::class)->middleware('auth');
+
+
+9-  Nos situamos en app\resources\views\layouts\app.blade.php
+
+       @if(Auth::check())
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('animes.index') }}">{{ __('Animes') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('categorias.index') }}">{{ __('Categorias') }}</a>
+                        </li>
+                    </ul>
+		@endif
+
+
+10- En AnimeController.php
+
+	public function create()
+    {
+        $anime = new Anime();
+        $categorias = Categoria::pluck('nombre','id');
+        return view('anime.create', compact('anime','categorias'));
+    }
+
+	public function edit($id)
+    {
+        $anime = Anime::find($id);
+        $categorias = Categoria::pluck('nombre','id');
+        return view('anime.edit', compact('anime','categorias'));
+    }
+
+
+
+11- Nos situamos en C:\xampp\htdocs\animeflv\resources\views\anime\form.blade.php
+    Modificamos la linea 6 {{ Form::select('categoria_id',$categorias, $anime->categoria_id, ['class' => 'form-control' . ($errors->has('anime_id') ? ' is-invalid' : '')]) }}
+
+
+12- Situarnos en animesflv\resources\views\layouts\app.blade.php
+	añadair los enlaces de Bootstrap tanto de CSS como de Javascript
+
+13- C:\xampp\htdocs\animeflv\app\Models\Anime.php
+
+    public function categoria()
+    {
+        return $this->hasOne('App\Models\Categoria', 'id', 'categoria_id');
+    }
+
+14- C:\xampp\htdocs\animeflv\resources\views\anime\show.blade.php
+    @section('content')
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card border-primary mb-3" style="max-width: 140rem;">
+                    <div class="card-header">
+                        <div class="float-left">
+                            <span class="card-title"> {{ $anime->nombreAnime }}</span> //MODIFICADO
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="form-group">
+                            <strong>Categoría Anime:</strong> //MODIFICADO
+                            {{ $anime->categoria->nombreCategoria }} //MODIFICADO
+                        </div>
+
+                        <div class="form-group">
+                            <strong>Duración:</strong> //MODIFICADO
+                            {{ $anime->duracion }}
+                        </div>
+                        <div class="form-group">
+                            <strong>Descripción:</strong> //MODIFICADO
+                            {{ $anime->descripcion }}
+                        </div>
+                        <div class="form-group">
+                            <strong>Valoración:</strong> //MODIFICADO
+                            {{ $anime->valoracion }}
+                        </div>
+                        <div class="float-right">
+                            <a class="btn btn-primary" href="{{ route('animes.index') }}"> {{ __('Volver') }}</a> //MODIFICADO
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+@endsection
+
+15- C:\xampp\htdocs\animeflv\resources\views\categoria\show.blade.php
+
+ <div class="card-body">
+
+                        <div class="form-group">
+                            <strong>Nombre de la Categoria:</strong>
+                            {{ $categoria->nombreCategoria }}
+                        </div>
+                        <div class="float-right">
+                            <a class="btn btn-primary" href="{{ route('categorias.index') }}"> {{ __('Volver') }}</a>
+                        </div>
+
+                    </div>
+
+16- Búsqueda de las carpetas y archivo json para la traducción de idioma a español
+    ubicada actualmente en lang/es y lang/es.sjon
+
+
+17- Cambiar idioma a español -> ir a C:\xampp\htdocs\animeflv\config\app.php
+    y modificar la linea 85 --> 'locale' => 'en', por 'locale' => 'es',
+
+18-  Modificación de las label en login.blade.php usando  fw-bold para mostrarlas en negrita
+    para una mejor visualización
+
+19- Ejecutamos el source control del Visual Studio Code para que podamos subir el proyecto
+    a GitHub
+
+
+20- Descargar GithubDesktop para poder subir directorios de nuestro equipo, añadimos todos
+    los recursos a dicha carpeta
+
+
+21- Añadir proyecto a Github creando un repositorio público en mi perfil guillermobastos
+    llamado proyectolaravelGuillermo y lo establecemos como público
+    (Solamente cargaba el .gitignore por lo que se opta por entregarlo a través de un link de OneDrive)
